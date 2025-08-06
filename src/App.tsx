@@ -1,9 +1,13 @@
-
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 function App() {
   return (
     <>
-      <h1>heldfdfg</h1>
+      <div className="grid w-full max-w-sm items-center gap-3">
+        <Label htmlFor="picture">Picture</Label>
+        <Input id="picture" type="file" />
+      </div>
     </>
   )
 }
