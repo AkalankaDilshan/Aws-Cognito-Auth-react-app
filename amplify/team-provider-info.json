@@ -10,6 +10,11 @@
       "StackName": "amplify-awscognitoauthreacta-dev-697a6",
       "StackId": "arn:aws:cloudformation:eu-north-1:533267403488:stack/amplify-awscognitoauthreacta-dev-697a6/8ada6bf0-72b6-11f0-aeac-0edf30cd2893",
       "AmplifyAppId": "d3lvmecf1fsv9k"
+    },
+    "categories": {
+      "auth": {
+        "awscognitoauthreactabf266153": {}
+      }
     }
   }
 }

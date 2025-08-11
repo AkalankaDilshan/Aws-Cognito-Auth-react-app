@@ -1,15 +1,44 @@
-import { Input } from "@/components/ui/input"
-import { Button } from "./components/ui/button"
+// App.js
+
+import { useAuth } from "react-oidc-context";
 
 function App() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="grid w-full max-w-sm items-center gap-3">
-        <Input id="Report" type="file" />
-        <Button className="w-1/3 space-y-6" type="submit">Submit</Button>
-      </div>
-    </div>
-  )
+     const auth = useAuth();
+
+     const signOutRedirect = () => {
+          const clientId = "3gml2q30bkbc8bkp71d4bsai0n";
+          const logoutUri = "<logout uri>";
+          const cognitoDomain = "https://<user pool domain>";
+          window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+     };
+
+     if (auth.isLoading) {
+          return <div>Loading...</div>;
+     }
+
+     if (auth.error) {
+          return <div>Encountering error... {auth.error.message}</div>;
+     }
+
+     if (auth.isAuthenticated) {
+          return (
+               <div>
+                    <pre> Hello: {auth.user?.profile.email} </pre>
+                    <pre> ID Token: {auth.user?.id_token} </pre>
+                    <pre> Access Token: {auth.user?.access_token} </pre>
+                    <pre> Refresh Token: {auth.user?.refresh_token} </pre>
+
+                    <button onClick={() => auth.removeUser()}>Sign out</button>
+               </div>
+          );
+     }
+
+     return (
+          <div>
+               <button onClick={() => auth.signinRedirect()}>Sign in</button>
+               <button onClick={() => signOutRedirect()}>Sign out</button>
+          </div>
+     );
 }
 
-export default App
+export default App;
