@@ -1,7 +1,7 @@
 // index.js
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App2";
+import App from "./App";
 import { AuthProvider } from "react-oidc-context";
 
 const cognitoAuthConfig = {
@@ -12,7 +12,7 @@ const cognitoAuthConfig = {
      scope: "phone openid email",
 };
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 // wrap the application with AuthProvider
 root.render(
