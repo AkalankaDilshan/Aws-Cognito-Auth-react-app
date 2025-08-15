@@ -16,5 +16,23 @@
         "awscognitoauthreactabf266153": {}
       }
     }
+  },
+  "production": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-awscognitoauthreacta-production-e10eb-authRole",
+      "UnauthRoleArn": "arn:aws:iam::017117988836:role/amplify-awscognitoauthreacta-production-e10eb-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::017117988836:role/amplify-awscognitoauthreacta-production-e10eb-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-awscognitoauthreacta-production-e10eb-deployment",
+      "UnauthRoleName": "amplify-awscognitoauthreacta-production-e10eb-unauthRole",
+      "StackName": "amplify-awscognitoauthreacta-production-e10eb",
+      "StackId": "arn:aws:cloudformation:eu-north-1:017117988836:stack/amplify-awscognitoauthreacta-production-e10eb/507ee5e0-799f-11f0-beee-06773204ef33",
+      "AmplifyAppId": "d19o5adt2rat0i"
+    },
+    "categories": {
+      "auth": {
+        "awscognitoauthreactabf266153": {}
+      }
+    }
   }
 }
