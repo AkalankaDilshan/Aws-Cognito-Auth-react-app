@@ -1,6 +1,7 @@
 // App.js
-
 import { useAuth } from "react-oidc-context";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Home from "./components/home";
 
 function App() {
      const auth = useAuth();
@@ -8,7 +9,7 @@ function App() {
      const signOutRedirect = () => {
           const clientId = "3gml2q30bkbc8bkp71d4bsai0n";
           const logoutUri = "<logout uri>";
-          const cognitoDomain = "https://<user pool domain>";
+          const cognitoDomain = "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com";
           window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
      };
 
@@ -16,28 +17,34 @@ function App() {
           return <div>Loading...</div>;
      }
 
-     if (auth.error) {
-          return <div>Encountering error... {auth.error.message}</div>;
-     }
-
-     if (auth.isAuthenticated) {
-          return (
-               <div>
-                    <pre> Hello: {auth.user?.profile.email} </pre>
-                    <pre> ID Token: {auth.user?.id_token} </pre>
-                    <pre> Access Token: {auth.user?.access_token} </pre>
-                    <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-
-                    <button onClick={() => auth.removeUser()}>Sign out</button>
-               </div>
-          );
-     }
-
      return (
-          <div>
-               <button onClick={() => auth.signinRedirect()}>Sign in</button>
-               <button onClick={() => signOutRedirect()}>Sign out</button>
-          </div>
+          <Router>
+               <Routes>
+                    <Route path="/" element={
+                         auth.isAuthenticated ? (
+                              <Navigate to="/hello" replace />
+                         ) : (
+                              <div>
+                                   <h1>Welcome to My App</h1>
+                                   <button onClick={() => auth.signinRedirect()}>Sign in</button>
+                              </div>
+                         )
+                    } />
+                    <Route path="/hello" element={
+                         auth.isAuthenticated ? (
+                              <div>
+                                   <Home />
+                                   <div style={{ marginTop: '20px' }}>
+                                        <p>Logged in as: {auth.user?.profile.email}</p>
+                                        <button onClick={() => auth.removeUser()}>Sign out</button>
+                                   </div>
+                              </div>
+                         ) : (
+                              <Navigate to="/" replace />
+                         )
+                    } />
+               </Routes>
+          </Router>
      );
 }
 
