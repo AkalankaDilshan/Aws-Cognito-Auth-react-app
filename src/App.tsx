@@ -8,7 +8,7 @@ function App() {
 
      const signOutRedirect = () => {
           const clientId = "3gml2q30bkbc8bkp71d4bsai0n";
-          const logoutUri = "<logout uri>";
+          const logoutUri = "https://www.youtube.com/";
           const cognitoDomain = "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com";
           window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
      };
@@ -36,7 +36,7 @@ function App() {
                                    <Home />
                                    <div style={{ marginTop: '20px' }}>
                                         <p>Logged in as: {auth.user?.profile.email}</p>
-                                        <button onClick={() => auth.removeUser()}>Sign out</button>
+                                        <button onClick={signOutRedirect}>Sign out</button>
                                    </div>
                               </div>
                          ) : (
