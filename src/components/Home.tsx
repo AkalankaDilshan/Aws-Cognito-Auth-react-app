@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const Home = () => {
-    const [file, setFile] = useState(null);
+// type-only imports (required by verbatimModuleSyntax)
+import type { ChangeEvent } from 'react';
+import type { AxiosProgressEvent } from 'axios';
+
+
+type Message = {
+    text: string;
+    type: 'error' | 'success' | '';
+};
+
+const Home: React.FC = () => {
+    const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [message, setMessage] = useState({ text: '', type: '' });
+    const [message, setMessage] = useState<Message>({ text: '', type: '' });
     const [fileName, setFileName] = useState('');
 
     const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
 
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
+    // ✅ typed 'e'
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
         if (selectedFile) {
-            // Check if file is either Excel or CSV
             const validTypes = [
                 'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -21,10 +31,12 @@ const Home = () => {
                 'application/csv'
             ];
 
-            if (validTypes.includes(selectedFile.type) ||
+            if (
+                validTypes.includes(selectedFile.type) ||
                 selectedFile.name.endsWith('.xls') ||
                 selectedFile.name.endsWith('.xlsx') ||
-                selectedFile.name.endsWith('.csv')) {
+                selectedFile.name.endsWith('.csv')
+            ) {
                 setFile(selectedFile);
                 setFileName(selectedFile.name);
                 setMessage({ text: '', type: '' });
@@ -54,10 +66,11 @@ const Home = () => {
                 'CognitoIdentityServiceProvider.7svjd5rvkjtv8ufooqus4o1ml6.c0cc697c-b071-7049-d364-681568476a61.accessToken'
             );
 
+            // OPTIONS request - ignore error
             try {
                 await axios.options(`${API_URL}/upload`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
                         'Access-Control-Request-Method': 'POST',
                         'Access-Control-Request-Headers': 'Authorization, Content-Type'
@@ -67,27 +80,32 @@ const Home = () => {
                 console.warn('OPTIONS request failed, proceeding anyway', optionsError);
             }
 
-            const response = await axios.post(`${API_URL}/upload`, formData, {
+            // ✅ removed unused 'response'
+            await axios.post(`${API_URL}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 },
                 withCredentials: true,
-                onUploadProgress: (progressEvent) => {
-                    const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setUploadProgress(progress);
+                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                    if (progressEvent.total) {
+                        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(progress);
+                    }
                 }
             });
 
             setMessage({ text: 'File uploaded successfully!', type: 'success' });
             setFile(null);
             setFileName('');
-        } catch (error) {
-            console.error('Upload error:', error);
+        } catch (err: unknown) {
+            console.error('Upload error:', err);
+
             let errorMessage = 'Failed to upload file';
-            if (error.response) {
-                errorMessage = error.response.data.message || errorMessage;
+            if (axios.isAxiosError(err)) {
+                errorMessage = err.response?.data?.message || errorMessage;
             }
+
             setMessage({ text: errorMessage, type: 'error' });
         } finally {
             setUploading(false);
@@ -145,20 +163,22 @@ const Home = () => {
 
             {uploading && (
                 <div style={{ margin: '20px 0', width: '100%' }}>
-                    <progress value={uploadProgress} max="100" style={{ width: '100%' }} />
+                    <progress value={uploadProgress} max={100} style={{ width: '100%' }} />
                     <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
                 </div>
             )}
 
             {message.text && (
-                <div style={{
-                    margin: '20px 0',
-                    padding: '10px',
-                    backgroundColor: message.type === 'error' ? '#ffebee' : '#e8f5e9',
-                    color: message.type === 'error' ? '#c62828' : '#2e7d32',
-                    borderRadius: '4px',
-                    borderLeft: `4px solid ${message.type === 'error' ? '#c62828' : '#2e7d32'}`
-                }}>
+                <div
+                    style={{
+                        margin: '20px 0',
+                        padding: '10px',
+                        backgroundColor: message.type === 'error' ? '#ffebee' : '#e8f5e9',
+                        color: message.type === 'error' ? '#c62828' : '#2e7d32',
+                        borderRadius: '4px',
+                        borderLeft: `4px solid ${message.type === 'error' ? '#c62828' : '#2e7d32'}`
+                    }}
+                >
                     {message.text}
                 </div>
             )}
