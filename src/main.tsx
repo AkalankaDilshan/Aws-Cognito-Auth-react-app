@@ -14,11 +14,11 @@ import { AuthProvider } from "react-oidc-context";
 // };
 
 const cognitoAuthConfig = {
-     authority: "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com/oauth2",
+     authority: "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com/login",
      client_id: "3gml2q30bkbc8bkp71d4bsai0n",
-     redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/", // must be added in Cognito callback URLs
+     redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/",
      response_type: "code",
-     scope: "openid email phone", // order doesn’t matter, but include openid
+     scope: "openid email phone",
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
