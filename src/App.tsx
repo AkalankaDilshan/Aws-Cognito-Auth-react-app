@@ -2,8 +2,9 @@
 import { useAuth } from "react-oidc-context";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from "./components/Home.js";
+import type { JSX } from "react";
 
-function App() {
+function App(): JSX.Element {
      const auth = useAuth();
 
      const signOutRedirect = () => {
@@ -12,6 +13,16 @@ function App() {
           const cognitoDomain = "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com";
           window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
      };
+
+     if (auth.error) {
+          return (
+               <div>
+                    <h1>Authentication Error</h1>
+                    <p>Error: {auth.error.message}</p>
+                    <button onClick={() => window.location.reload()}>Retry</button>
+               </div>
+          );
+     }
 
      if (auth.isLoading) {
           return <div>Loading...</div>;
@@ -27,9 +38,20 @@ function App() {
                               <div>
                                    <h1>Welcome to My App</h1>
                                    <button onClick={() => auth.signinRedirect()}>Sign in</button>
+                                   {auth.error && (
+                                        <div style={{ color: 'red', marginTop: '10px' }}>
+                                             Authentication failed: {(auth.error as Error)?.message || 'Unknown error'}
+                                        </div>
+                                   )}
                               </div>
                          )
                     } />
+
+                    {/* Add callback route for post-authentication redirect */}
+                    <Route path="/callback" element={
+                         <div>Processing authentication...</div>
+                    } />
+
                     <Route path="/hello" element={
                          auth.isAuthenticated ? (
                               <div>
