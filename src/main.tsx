@@ -4,13 +4,21 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "react-oidc-context";
 
+// const cognitoAuthConfig = {
+//      authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_ExjMiZeM0",
+//      client_id: "3gml2q30bkbc8bkp71d4bsai0n",
+//      //redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/", //my amplify Domain url
+//      //redirect_uri: "http://localhost:5173/",
+//      response_type: "code",
+//      scope: "email openid phone",
+// };
+
 const cognitoAuthConfig = {
-     authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_ExjMiZeM0",
+     authority: "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com", // hosted UI domain
      client_id: "3gml2q30bkbc8bkp71d4bsai0n",
-     redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/", //my amplify Domain url
-     //redirect_uri: "http://localhost:5173/",
+     redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/", // must be added in Cognito callback URLs
      response_type: "code",
-     scope: "email openid phone",
+     scope: "openid email phone", // order doesn’t matter, but include openid
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
