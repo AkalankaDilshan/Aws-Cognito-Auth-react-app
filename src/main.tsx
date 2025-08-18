@@ -14,7 +14,7 @@ import { AuthProvider } from "react-oidc-context";
 // };
 
 const cognitoAuthConfig = {
-     authority: "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com", // hosted UI domain
+     authority: "https://eu-north-1exjmizem0.auth.eu-north-1.amazoncognito.com/oauth2",
      client_id: "3gml2q30bkbc8bkp71d4bsai0n",
      redirect_uri: "https://main.d2n7wx66fj019p.amplifyapp.com/", // must be added in Cognito callback URLs
      response_type: "code",
