@@ -18,7 +18,10 @@ const Home: React.FC = () => {
     const [message, setMessage] = useState<Message>({ text: '', type: '' });
     const [fileName, setFileName] = useState('');
 
-    const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
+    //const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
+    //arn:aws:execute-api:eu-north-1:017117988836:mwh3cj2wme/*/POST/upload
+    //const API_URL = 'https://sv33rocru5.execute-api.eu-north-1.amazonaws.com/prod';
+    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/production'
 
     // ✅ typed 'e'
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
