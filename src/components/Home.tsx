@@ -200,9 +200,10 @@ const Home: React.FC = () => {
 
             {uploading && (
                 <div style={{ margin: '20px 0', width: '100%' }}>
-                    <progress value={uploadProgress} max={100} style={{ width: '100%' }} />
-                    <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
-                </progress>
+                    <progress value={uploadProgress} max={100} style={{ width: '100%' }}>
+                        <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
+                    </progress>
+                </div>
             )}
 
             {message.text && (
