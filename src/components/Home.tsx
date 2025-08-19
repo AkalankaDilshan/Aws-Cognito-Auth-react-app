@@ -83,9 +83,6 @@ const Home: React.FC = () => {
         setUploadProgress(0);
         setMessage({ text: '', type: '' });
 
-        const formData = new FormData();
-        formData.append('file', file);
-
         try {
             // Get token from session storage
             const token = getTokenFromSessionStorage();
@@ -96,25 +93,31 @@ const Home: React.FC = () => {
                 return;
             }
 
-            // OPTIONS request - ignore error
-            try {
-                await axios.options(`${API_URL}/upload`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                        'Access-Control-Request-Method': 'POST',
-                        'Access-Control-Request-Headers': 'Authorization, Content-Type'
-                    }
-                });
-            } catch (optionsError) {
-                console.warn('OPTIONS request failed, proceeding anyway', optionsError);
-            }
+            // Convert file to base64
+            const fileBase64 = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const result = reader.result as string;
+                    // Remove the data:mime/type;base64, prefix
+                    const base64 = result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+
+            // Prepare JSON payload to match Lambda expectation
+            const payload = {
+                file: fileBase64  // Lambda expects 'file' key with base64 content
+            };
 
             // ✅ removed unused 'response'
-            await axios.post(`${API_URL}/upload`, formData, {
+            await axios.post(`${API_URL}/upload`, payload, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'filename': file.name,           // Lambda reads filename from headers
+                    'content-type': file.type        // Lambda reads content-type from headers
                 },
                 withCredentials: true,
                 onUploadProgress: (progressEvent: AxiosProgressEvent) => {
@@ -197,10 +200,9 @@ const Home: React.FC = () => {
 
             {uploading && (
                 <div style={{ margin: '20px 0', width: '100%' }}>
-                    <progress value={uploadProgress} max={100} style={{ width: '100%' }}>
-                        <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
-                    </progress>
-                </div>
+                    <progress value={uploadProgress} max={100} style={{ width: '100%' }} />
+                    <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
+                </progress>
             )}
 
             {message.text && (
