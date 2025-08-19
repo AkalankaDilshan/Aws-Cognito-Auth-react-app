@@ -20,7 +20,7 @@ const Home: React.FC = () => {
 
     //const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
     //arn:aws:execute-api:eu-north-1:017117988836:mwh3cj2wme/*/POST/upload
-    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod';
+    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod2';
     //const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/production'
 
     // Helper function to get token from session storage
