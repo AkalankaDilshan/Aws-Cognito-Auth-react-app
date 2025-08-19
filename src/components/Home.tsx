@@ -106,20 +106,28 @@ const Home: React.FC = () => {
                 reader.readAsDataURL(file);
             });
 
-            // Prepare JSON payload to match Lambda expectation
+            // Log the payload size for debugging
+            console.log('File size:', file.size, 'bytes');
+            console.log('Base64 size:', fileBase64.length, 'characters');
+            console.log('File name:', file.name);
+            console.log('File type:', file.type);
+
+            // Prepare JSON payload with filename and content-type in body
             const payload = {
-                file: fileBase64  // Lambda expects 'file' key with base64 content
+                file: fileBase64,           // Lambda expects 'file' key with base64 content
+                filename: file.name,        // Send filename in body instead of headers
+                contentType: file.type      // Send content-type in body instead of headers
             };
 
             // ✅ removed unused 'response'
-            await axios.post(`${API_URL}/upload`, payload, {
+            const response = await axios.post(`${API_URL}/upload`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    'filename': file.name,           // Lambda reads filename from headers
-                    'content-type': file.type        // Lambda reads content-type from headers
+                    'Authorization': `Bearer ${token}`
+                    // Removed custom headers that cause CORS issues
                 },
                 withCredentials: true,
+                timeout: 30000, // 30 second timeout for large files
                 onUploadProgress: (progressEvent: AxiosProgressEvent) => {
                     if (progressEvent.total) {
                         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -127,6 +135,8 @@ const Home: React.FC = () => {
                     }
                 }
             });
+
+            console.log('Upload response:', response.data);
 
             setMessage({ text: 'File uploaded successfully!', type: 'success' });
             setFile(null);
@@ -136,10 +146,17 @@ const Home: React.FC = () => {
 
             let errorMessage = 'Failed to upload file';
             if (axios.isAxiosError(err)) {
+                // Log the full response for debugging
+                console.error('Response data:', err.response?.data);
+                console.error('Response status:', err.response?.status);
+                console.error('Response headers:', err.response?.headers);
+
                 if (err.response?.status === 401) {
                     errorMessage = 'Authentication failed. Please log in again.';
+                } else if (err.response?.status === 400) {
+                    errorMessage = `Bad request: ${err.response?.data?.error || err.response?.data?.details || 'Invalid request format'}`;
                 } else {
-                    errorMessage = err.response?.data?.message || errorMessage;
+                    errorMessage = err.response?.data?.message || err.response?.data?.error || errorMessage;
                 }
             }
 
