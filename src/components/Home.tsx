@@ -18,10 +18,11 @@ const Home: React.FC = () => {
     const [message, setMessage] = useState<Message>({ text: '', type: '' });
     const [fileName, setFileName] = useState('');
 
-    //const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
+    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod_stag';
     //arn:aws:execute-api:eu-north-1:017117988836:mwh3cj2wme/*/POST/upload
-    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod';
+    // const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod'; //meka thamai wada kre
     //const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/production'
+
 
     // Helper function to get token from session storage
     const getTokenFromSessionStorage = (): string | null => {
