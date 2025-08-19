@@ -23,6 +23,28 @@ const Home: React.FC = () => {
     const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod';
     //const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/production'
 
+    // Helper function to get token from session storage
+    const getTokenFromSessionStorage = (): string | null => {
+        try {
+            // Look for keys that start with 'oidc.user:'
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                if (key && key.startsWith('oidc.user:')) {
+                    const userDataStr = sessionStorage.getItem(key);
+                    if (userDataStr) {
+                        const userData = JSON.parse(userDataStr);
+                        // Return the id_token if it exists
+                        return userData.id_token || null;
+                    }
+                }
+            }
+            return null;
+        } catch (error) {
+            console.error('Error parsing session storage:', error);
+            return null;
+        }
+    };
+
     // ✅ typed 'e'
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
@@ -65,9 +87,14 @@ const Home: React.FC = () => {
         formData.append('file', file);
 
         try {
-            const token = localStorage.getItem(
-                'CognitoIdentityServiceProvider.7svjd5rvkjtv8ufooqus4o1ml6.c0cc697c-b071-7049-d364-681568476a61.accessToken'
-            );
+            // Get token from session storage
+            const token = getTokenFromSessionStorage();
+
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in again.', type: 'error' });
+                setUploading(false);
+                return;
+            }
 
             // OPTIONS request - ignore error
             try {
@@ -106,7 +133,11 @@ const Home: React.FC = () => {
 
             let errorMessage = 'Failed to upload file';
             if (axios.isAxiosError(err)) {
-                errorMessage = err.response?.data?.message || errorMessage;
+                if (err.response?.status === 401) {
+                    errorMessage = 'Authentication failed. Please log in again.';
+                } else {
+                    errorMessage = err.response?.data?.message || errorMessage;
+                }
             }
 
             setMessage({ text: errorMessage, type: 'error' });
@@ -166,8 +197,9 @@ const Home: React.FC = () => {
 
             {uploading && (
                 <div style={{ margin: '20px 0', width: '100%' }}>
-                    <progress value={uploadProgress} max={100} style={{ width: '100%' }} />
-                    <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
+                    <progress value={uploadProgress} max={100} style={{ width: '100%' }}>
+                        <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
+                    </progress>
                 </div>
             )}
 
