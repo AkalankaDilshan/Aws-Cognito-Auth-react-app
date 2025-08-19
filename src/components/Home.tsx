@@ -20,7 +20,7 @@ const Home: React.FC = () => {
 
     //const API_URL = 'https://mwh3cj2wme.execute-api.eu-north-1.amazonaws.com/prod';
     //arn:aws:execute-api:eu-north-1:017117988836:mwh3cj2wme/*/POST/upload
-    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod_stag';
+    const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/prod';
     //const API_URL = 'https://fx2vv0wbnf.execute-api.eu-north-1.amazonaws.com/production'
 
     // Helper function to get token from session storage
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
                     'Authorization': `Bearer ${token}`
                     // Removed custom headers that cause CORS issues
                 },
-                withCredentials: true,
+                // Removed withCredentials since we're using Bearer token
                 timeout: 30000, // 30 second timeout for large files
                 onUploadProgress: (progressEvent: AxiosProgressEvent) => {
                     if (progressEvent.total) {
@@ -217,7 +217,7 @@ const Home: React.FC = () => {
 
             {uploading && (
                 <div style={{ margin: '20px 0', width: '100%' }}>
-                    <progress value={uploadProgress} max={100} style={{ width: '100%' }}>
+                    <progress value={uploadProgress} max={100} style={{ width: '100%' }} >
                         <div style={{ textAlign: 'center' }}>{uploadProgress}%</div>
                     </progress>
                 </div>
